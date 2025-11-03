@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Goriber Bank</title>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+
+<body class="mx-16">
+  <div class="mx-auto">
+    <h1 class="mx-auto text-center my-10">
+      <span class="font-bold text-violet-700 text-5xl">Goriber </span>
+      <span class="font-bold text-rose-500 text-5xl"> Bank</span>
+    </h1>
+
+    <div>
+      <img src="https://static.vecteezy.com/system/resources/previews/019/896/008/original/male-user-avatar-icon-in-flat-design-style-person-signs-illustration-png.png" alt=""
+        class="rounded-full w-[300px] h-[250px] text-center mx-auto" />
+
+      <div class="mx-auto font-semibold text-lg text-left flex gap-4 my-4">
+        <h2 class=" text-center bg-slate-100 px-3 py-2 w-1/4 rounded-sm">Name: Account holder's Name</h2>
+        <h2 class=" text-center bg-slate-100 px-3 py-2 w-1/4 rounded-sm">Email: user@gamil.com</h2>
+        <h2 class=" text-center bg-slate-100 px-3 py-2 w-1/4 rounded-sm">A/C: 112313256123456</h2>
+        <h2 class=" text-center bg-slate-100 px-3 py-2 w-1/4 rounded-sm text-blue-900">Balance:
+          <span id="Balance" class="text-red-700">1000000</span> BDT
+        </h2>
+      </div>
+    </div>
+
+    <div class="forms flex justify-around items-center gap-10 my-10">
+      <div class="flex gap-4 justify-around bg-gray-100 shadow-sm px-5 py-4 w-1/2 rounded-md">
+        <h1 class="text-2xl text-center text-green-950 mb-3 font-semibold">Deposit</h1>
+        <div class="flex gap-2 justify-center items-center">
+          <input type="number" id="DepositAmount" placeholder="Deposit Amount" class="w-[300px] h-[40px] px-4" />
+          <button id="depositbtn" class="btn btn-sm btn-primary h-[40px] disabled:opacity-50 disabled:cursor-not-allowed">Deposit</button>
+        </div>
+      </div>
+
+      <div class="flex gap-4 justify-around bg-gray-100 shadow-sm px-5 py-4 w-1/2 rounded-md">
+        <h1 class="text-2xl text-center text-red-950 mb-3 font-semibold">Withdraw</h1>
+        <div class="flex gap-2 justify-center items-center">
+          <input type="number" id="WithdrawAmount" placeholder="Withdraw Amount" class="w-[300px] h-[40px] px-4" />
+          <button id="Withdrawbtn" class="btn btn-sm btn-primary h-[40px] disabled:opacity-50 disabled:cursor-not-allowed">Withdraw</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h1 class="text-2xl text-center text-blue-950 mb-3 font-semibold">Transaction History</h1>
+      <div class="overflow-x-auto">
+        <table id="transactionTable" class="table w-full mb-10">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Type</th>
+              <th>Amount</th>
+              <th>Date & Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Deposit</td>
+              <td>1000</td>
+              <td>2023-10-01 10:00:00</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Withdraw</td>
+              <td>500</td>
+              <td>2023-10-02 12:00:00</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+</body>
+
+<script>
+  const balanceEl = document.getElementById('Balance');
+  const transactionTableBody = document.getElementById('transactionTable').querySelector('tbody');
+
+  
+  const depositInput = document.getElementById('DepositAmount');
+  const depositBtn = document.getElementById('depositbtn');
+  depositBtn.disabled = true;
+
+  depositInput.addEventListener('input', () => {
+    const value = depositInput.value;
+    depositBtn.disabled = value === '' || parseInt(value) <= 0;
+  });
+
+  depositBtn.addEventListener('click', () => {
+    const amount = parseInt(depositInput.value);
+    if (isNaN(amount)) return;
+
+    balanceEl.innerText = parseInt(balanceEl.innerText) + amount;
+    depositInput.value = '';
+    depositBtn.disabled = true;
+
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${transactionTableBody.querySelectorAll('tr').length + 1}</td>
+      <td>Deposit</td>
+      <td>${amount}</td>
+      <td>${new Date().toLocaleString()}</td>
+    `;
+    transactionTableBody.appendChild(row);
+  });
+
+
+  const withdrawInput = document.getElementById('WithdrawAmount');
+  const withdrawBtn = document.getElementById('Withdrawbtn');
+  withdrawBtn.disabled = true;
+
+  withdrawInput.addEventListener('input', () => {
+    const value = parseInt(withdrawInput.value);
+    const balance = parseInt(balanceEl.innerText);
+    withdrawBtn.disabled = isNaN(value) || value <= 0 || value > balance;
+  });
+
+  withdrawBtn.addEventListener('click', () => {
+    const amount = parseInt(withdrawInput.value);
+    if (isNaN(amount) || amount > parseInt(balanceEl.innerText)) return;
+
+    balanceEl.innerText = parseInt(balanceEl.innerText) - amount;
+    withdrawInput.value = '';
+    withdrawBtn.disabled = true;
+
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${transactionTableBody.querySelectorAll('tr').length + 1}</td>
+      <td>Withdraw</td>
+      <td>${amount}</td>
+      <td>${new Date().toLocaleString()}</td>
+    `;
+    transactionTableBody.appendChild(row);
+  });
+</script>
+
+</html>
